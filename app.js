@@ -23,6 +23,19 @@ router.get("/songs", async(req, res) =>{
     }
 })
 
+//Grab a single song in the database
+router.get("/songs/:id", async(req, res) =>{
+    try{
+        const song = await Song.findById(req.params.id)
+        res.json(song)
+    }
+    catch (err){
+        res.status(400).send(err)
+    }
+})
+
+
+//added song to the database
 router.post("/songs", async(req, res) =>{
     try{
         const song = await new Song(req.body)
@@ -33,9 +46,25 @@ router.post("/songs", async(req, res) =>{
     catch (err){
         res.status(400).send(err)
     
-    }})
+    }
 
-//all request that usually use an api start with /api...so the url would be localhost:3000/api/songs
+})
+
+//update an existing song in the database, use a put request
+router.put("/songs/:id", async(req, res) =>{
+    //first find and update song front end wants to update
+    try{
+        const song = req.body
+        await song.updateOne({_id:req.params.id}, song)
+        console.log(song)
+        res.sendStatus(204)
+
+    }
+    catch (err){
+        res.status(400).send(err)
+    }
+})
+
 app.use("/api", router);
 
 app.listen(3000);
